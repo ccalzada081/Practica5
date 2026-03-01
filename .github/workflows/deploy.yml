@@ -27,6 +27,7 @@ jobs:
 
       - name: Build
         run: npm run build
+
       - name: Publish
         uses: actions/upload-artifact@v4
         with:
@@ -34,7 +35,7 @@ jobs:
           path: dist/
 
   release:
-    name: CD
+    name: CD - DEV
     needs: build
     runs-on: ubuntu-latest
     environment: dev
@@ -51,11 +52,11 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy dist/practice4/index.js --name ancient-heart-d5b8 --compatibility-date 2026-03-01 --compatibility-flags=nodejs_compat  --assets dist/client
+          command: deploy dist/practice4/index.js --name ancient-heart-d5b8 --compatibility-date 2026-03-01 --compatibility-flags=nodejs_compat --assets dist/client
 
   release_prod:
-    name: CD - Prod
-    needs: release_dev
+    name: CD - PROD
+    needs: release
     runs-on: ubuntu-latest
     environment: prod
 
@@ -66,9 +67,9 @@ jobs:
           name: dist
           path: dist/
 
-      - name: Deploy Prod
+      - name: Deploy-PROD
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy dist/practice4/index.js --name ancient-heart-d5b8-prod --compatibility-date 2026-03-01 --compatibility-flags=nodejs_compat --assets dist/client
+          command: deploy dist/practice4/index.js --name ancient-heart-prod-d5b8 --compatibility-date 2026-03-01 --compatibility-flags=nodejs_compat --assets dist/client
