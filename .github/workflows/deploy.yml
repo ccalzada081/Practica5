@@ -52,3 +52,23 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy dist/practice4/index.js --name ancient-heart-d5b8 --compatibility-date 2026-03-01 --compatibility-flags=nodejs_compat  --assets dist/client
+
+  release_prod:
+    name: CD - Prod
+    needs: release_dev
+    runs-on: ubuntu-latest
+    environment: prod
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Deploy Prod
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy dist/practice4/index.js --name ancient-heart-d5b8-prod --compatibility-date 2026-03-01 --compatibility-flags=nodejs_compat --assets dist/client
